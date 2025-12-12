@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 // StepCounterService.kt
 class StepCounterService : Service(), SensorEventListener {
 
+
     private lateinit var sensorManager: SensorManager
     private var stepSensor: Sensor? = null
     private var stepsToday = 0

@@ -5,9 +5,9 @@ package com.example.integradorav11.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.integradorav11.model.StepEntry // Se asume que StepEntry existe en este paquete
+import com.example.integradorav11.model.StepEntry
 import com.example.integradorav11.repository.StepRepository
-import com.example.integradorav11.model.Result // <-- IMPORTACIÓN NECESARIA
+import com.example.integradorav11.model.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,13 +38,11 @@ class HistoryViewModel(private val repository: StepRepository) : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // Se corrigió el error: la clase Result ahora está disponible via importación
                 when (val result = repository.getHistory()) {
                     is Result.Success -> _historySteps.value = result.data.sortedByDescending { it.date }
-                    is Result.Failure -> _uiMessage.value = "Error al cargar historial: ${result.exception.message}" // USO CORREGIDO
+                    is Result.Failure -> _uiMessage.value = "Error al cargar historial: ${result.exception.message}"
                 }
             } catch (e: Exception) {
-                // Manejar excepción de cancelación de corutina
                 if (e is CancellationException) throw e
                 _uiMessage.value = "Error de conexión o desconocido."
             } finally {
@@ -57,7 +55,6 @@ class HistoryViewModel(private val repository: StepRepository) : ViewModel() {
     fun deleteStepEntry(date: String) {
         viewModelScope.launch {
             _isLoading.value = true
-            // Se corrigió el error: la clase Result ahora está disponible via importación
             when (val result = repository.deleteSteps(date)) {
                 is Result.Success -> {
                     _uiMessage.value = "Registro del $date borrado con éxito."
@@ -65,7 +62,24 @@ class HistoryViewModel(private val repository: StepRepository) : ViewModel() {
                     loadHistory()
                 }
                 is Result.Failure -> {
-                    _uiMessage.value = "Error al borrar el registro: ${result.exception.message}" // USO CORREGIDO
+                    _uiMessage.value = "Error al borrar el registro: ${result.exception.message}"
+                    _isLoading.value = false
+                }
+            }
+        }
+    }
+
+    // OPERACIÓN UPDATE (Reutiliza saveSteps que hace un Upsert)
+    fun updateStepEntry(date: String, newSteps: Int) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            when (val result = repository.saveSteps(newSteps, date)) {
+                is Result.Success -> {
+                    _uiMessage.value = "Registro del $date actualizado a $newSteps pasos."
+                    loadHistory() // Recargar para mostrar los cambios
+                }
+                is Result.Failure -> {
+                    _uiMessage.value = "Error al actualizar: ${result.exception.message}"
                     _isLoading.value = false
                 }
             }
@@ -73,6 +87,6 @@ class HistoryViewModel(private val repository: StepRepository) : ViewModel() {
     }
 
     fun messageConsumed() {
-        _uiMessage.value = null // Limpiar el mensaje de error/éxito
+        _uiMessage.value = null
     }
 }

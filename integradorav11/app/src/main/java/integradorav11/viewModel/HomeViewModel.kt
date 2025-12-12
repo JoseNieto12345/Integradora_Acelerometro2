@@ -13,10 +13,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Date // <-- Importación corregida para obtener la fecha
-import java.util.Locale // <-- Importación corregida para el formato de fecha
+import java.util.Date // <-- Importación para obtener la fecha
+import java.util.Locale // <-- Importación  para el formato de fecha
 
-// viewmodel/HomeViewModel.kt
 class HomeViewModel(private val repository: StepRepository) : ViewModel() {
 
     // Estado del contador de pasos de hoy (viene del SensorService)

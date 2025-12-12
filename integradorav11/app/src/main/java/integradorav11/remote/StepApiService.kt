@@ -12,7 +12,6 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 
 interface StepApiService {
-
     @GET("/api/steps")
     suspend fun getHistorySteps(): List<StepEntry>
 

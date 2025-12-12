@@ -1,7 +1,9 @@
 package com.example.integradorav11.model
 
 // model/Result.kt
-sealed class Result<out T> {
+sealed class
+
+Result<out T> {
     // 1. Éxito: Contiene el dato que esperábamos (ej. List<StepEntry>)
     data class Success<out T>(val data: T) : Result<T>()
 
